@@ -1,8 +1,11 @@
 # Import necessary modules (assuming OpenAI or other APIs might be used)
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class LLMResponse:
-    def __init__(self, model_name):
+    def __init__(self, model_name='gpt-4o-mini'):
         """
         Initialize the LLMResponse with the given model name.
         """
@@ -66,6 +69,7 @@ class SkimmedResult:
         """
         self.raw_reading_materials = raw_reading_materials
         self.skimmed_graph = OmniAnsGraph()
+
     def skim_materials(self):
         """
         Process the raw reading materials to create a high-level knowledge graph.
@@ -104,9 +108,23 @@ class OmniAnsGraph:
 
 # Example usage
 if __name__ == "__main__":
+
+    # Testing LLMResponse
+    llm = LLMResponse("gpt-3.5-turbo")  # Use an appropriate model name
+    user_prompt = "What are the three laws of robotics?"
+    system_prompt = "You are a helpful AI assistant knowledgeable about science fiction and technology."
+    
+    try:
+        response = llm.llm_output(user_prompt, system_prompt)
+        print("LLM Response Test:")
+        print(f"User Prompt: {user_prompt}")
+        print(f"Response: {response.content}")
+    except Exception as e:
+        print(f"Error in LLM Response: {str(e)}")
+
     # Initialize research with a research question and background context
     research = Research(research_question="What is the impact of AI on job automation?", background_context="The rise of AI technologies in various industries.")
-
+    
     # Assuming you have some raw materials to skim
     raw_materials = "Various articles, papers, and books on AI and automation."
     research.skimmed_result = SkimmedResult(raw_reading_materials=raw_materials)
