@@ -228,6 +228,47 @@ class DecisionAgent(LLMAgent):
 
         return case, choice_analysis, cost_evaluation
 
+    def predict_outcome(self, case: DecisionCase, option: DecisionOption) -> OutcomePrediction:
+        """
+        Predict the outcome of choosing a specific option in a given DecisionCase.
+
+        :param case: DecisionCase object containing the problem and options
+        :param option: The specific DecisionOption to predict the outcome for
+        :return: OutcomePrediction object containing the option and its predicted outcome
+        """
+        context = f"""
+        Problem: {case.problem}
+
+        All options:
+        {chr(10).join(f"- {opt.description}" for opt in case.options)}
+
+        Selected option: {option.description}
+        """
+
+        user_prompt = f"Please predict the outcome if the following option is chosen:\n\n{context}"
+        system_prompt = """
+        You are an AI assistant specializing in predicting outcomes based on decisions. Your task is to:
+        1. Carefully analyze the given problem and the selected option.
+        2. Predict the most likely outcome if this option is chosen.
+        3. Provide a vivid, detailed description of the predicted outcome.
+        4. Include potential consequences, both positive and negative.
+        5. Consider short-term and long-term effects.
+        6. Use your imagination to fill in details, but ensure they logically follow from the given information.
+        7. Make your prediction specific, engaging, and realistic.
+
+        Your prediction should be comprehensive, engaging, and paint a clear picture of the potential future. 
+        Use sensory details, potential dialogues, and specific events to make your prediction come alive. 
+        Ensure that your prediction is coherent and makes logical sense given the context of the problem and the chosen option.
+        """
+
+        response = self.perform_action(
+            user_prompt=user_prompt,
+            system_prompt=system_prompt,
+            schema_class=OutcomePrediction
+        )
+
+        return response
+
 # Example usage in main
 if __name__ == "__main__":
     # ... existing code ...
